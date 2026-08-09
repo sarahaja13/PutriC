@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#211526"><title>Love Reading — Putri & Subur</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=DM+Sans:wght@400;500;600&family=Great+Vibes&display=swap');
+:root{--ink:#302132;--plum:#4c2947;--rose:#8c4968;--gold:#b98a62;--cream:#f7eee8}
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden}
+body{background:radial-gradient(circle at 20% 15%,#fff8,transparent 24%),radial-gradient(circle at 80% 80%,#b37d942e,transparent 28%),linear-gradient(145deg,#f9f1ec,#ead8d8 55%,#f5e9e4);color:var(--ink);font-family:"DM Sans",sans-serif}
+button,input{font:inherit}button{cursor:pointer}#app{height:100%;position:relative}
+#particles{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:0}
+.spark{position:absolute;width:3px;height:3px;border-radius:50%;background:#fff;box-shadow:0 0 10px #b98a6288;animation:twinkle 3.5s ease-in-out infinite}
+@keyframes twinkle{0%,100%{opacity:.1;transform:scale(.7)}50%{opacity:.9;transform:scale(1.5)}}
+.screen{position:absolute;inset:0;display:none;z-index:2}.screen.active{display:flex}
+.ornate{position:absolute;inset:14px;border:1px solid #89526859;pointer-events:none}.ornate:before,.ornate:after{content:"✦";position:absolute;color:var(--gold);font-size:15px;background:var(--cream);padding:0 8px;left:48%}.ornate:before{top:-10px}.ornate:after{bottom:-10px}
+#lockScreen{align-items:center;justify-content:center;padding:30px;background:radial-gradient(circle at 50% 18%,#ffffffd9,transparent 25%),linear-gradient(145deg,#fbf2ecf0,#e8d5d7f5)}
+.lock-card{width:min(440px,100%);text-align:center;position:relative;padding:54px 30px 42px;border:1px solid #89526859;background:#fffaf799;box-shadow:0 25px 70px #4b28421f;backdrop-filter:blur(12px)}
+.moon{font-size:42px;color:#7a526d;margin-bottom:12px}.eyebrow{letter-spacing:.32em;text-transform:uppercase;font-size:11px;color:#866278}
+.lock-title{font-family:"Cormorant Garamond",serif;font-size:52px;line-height:.9;margin:18px 0 12px;color:#4a2845;font-weight:600}
+.script{font-family:"Great Vibes",cursive;color:#8b4b68;font-size:36px}.lock-copy{font-family:"Cormorant Garamond",serif;font-size:18px;line-height:1.35;color:#604b59;margin:22px auto 28px;max-width:330px}
+.pass-wrap{position:relative;max-width:310px;margin:auto}.pass-wrap input{width:100%;height:52px;border:1px solid #89526863;border-radius:999px;background:#ffffffb3;padding:0 20px;outline:none;text-align:center;color:#4c2947}
+.pass-wrap input:focus{box-shadow:0 0 0 4px #8c49681a}.unlock{margin-top:13px;border:0;border-radius:999px;padding:13px 30px;background:linear-gradient(135deg,#6f3c61,#9c5b76);color:white;box-shadow:0 10px 25px #6f3c6133;transition:.25s}.unlock:hover{transform:translateY(-2px)}
+.error{height:20px;margin-top:10px;color:#9a4661;font-size:12px;opacity:0}.error.show{opacity:1}
+#reader{background:#eadbdd;align-items:center;justify-content:center}.viewer{width:100%;height:100%;display:flex;align-items:center;justify-content:center;position:relative}
+.page-stage{height:calc(100% - 76px);width:min(100%,760px);display:flex;align-items:center;justify-content:center;position:relative;padding:10px}
+.page-img{max-height:100%;max-width:100%;width:auto;height:auto;object-fit:contain;display:block;box-shadow:0 18px 60px #301e2e38;opacity:1;transform:translateY(0) scale(1);transition:opacity .38s,transform .38s}
+.page-img.swap{opacity:0;transform:translateY(8px) scale(.985)}
+.page-15{width:min(720px,92vw);height:calc(100% - 30px);max-height:920px;display:none;align-items:center;justify-content:center;text-align:center;background:radial-gradient(circle at 50% 20%,#fffbb3,transparent 28%),linear-gradient(160deg,#fbf2ec,#ead9dc);border:1px solid #89526859;box-shadow:0 18px 60px #301e2e33;position:relative;overflow:hidden}
+.page-15.show{display:flex}.page-15 .inner{padding:55px 28px;max-width:600px}.page-15 h1{font-family:"Cormorant Garamond",serif;font-size:68px;letter-spacing:.06em;margin:18px 0 6px;color:#4a2845}.big-script{font:48px "Great Vibes",cursive;color:#8c4968}
+.page-15 p{font:22px/1.4 "Cormorant Garamond",serif;color:#654d5a;max-width:460px;margin:24px auto}.heart{color:#9b5c76;font-size:25px}.moon-row{letter-spacing:13px;color:#8e6278;margin:30px 0;font-size:20px}
+.nav{position:fixed;left:50%;bottom:14px;transform:translateX(-50%);width:min(520px,calc(100% - 28px));height:48px;z-index:8;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:6px 8px;border:1px solid #8952684d;background:#fff8f4c2;backdrop-filter:blur(14px);border-radius:999px;box-shadow:0 12px 35px #301e2e1f}
+.nav button{width:36px;height:36px;border:0;border-radius:50%;background:transparent;color:#6e4660;font-size:19px}.nav button:hover{background:#8c496815}
+.counter{font-size:12px;letter-spacing:.14em;color:#77596a;white-space:nowrap}.dots{display:flex;gap:5px;align-items:center}.dot{width:5px;height:5px;border-radius:50%;background:#c8a9b7;transition:.25s}.dot.active{width:17px;border-radius:999px;background:#85516e}
+.cover-overlay{position:absolute;left:22px;right:22px;top:22px;display:flex;justify-content:space-between;align-items:center;z-index:3;pointer-events:none}.badge,.hint{padding:6px 11px;border:1px solid #8952684d;border-radius:999px;background:#fff9f6b3;font-size:10px;letter-spacing:.18em;color:#78566a}.hint{letter-spacing:0;font-size:11px}
+@media(max-width:600px){.page-stage{height:calc(100% - 70px);padding:8px 5px 0}.page-img{max-width:calc(100vw - 10px)}.lock-title{font-size:46px}.page-15 h1{font-size:52px}.page-15 .big-script{font-size:40px}.page-15 p{font-size:19px}.dots{display:none}}
+</style></head>
+<body><div id="app"><div id="particles"></div>
+<section id="lockScreen" class="screen active"><div class="ornate"></div><div class="lock-card">
+<div class="moon">☾</div><div class="eyebrow">a private love reading</div><div class="lock-title">LOVE<br>READING</div>
+<div class="script">Putri &amp; Subur</div><div class="lock-copy">Some stories are not meant to be rushed.<br>This one is meant to be felt.</div>
+<div class="pass-wrap"><input id="password" type="password" autocomplete="off" placeholder="Masukkan password"></div>
+<button class="unlock" id="unlockBtn">Buka Reading ♡</button><div class="error" id="error">Password belum tepat.</div>
+</div></section>
+<section id="reader" class="screen"><div class="viewer"><div class="cover-overlay"><div class="badge">LOVE • INSIGHT • GUIDANCE</div><div class="hint">Putri &amp; Subur</div></div>
+<div class="page-stage"><img id="pageImg" class="page-img" alt="Love Reading"><div id="page15" class="page-15"><div class="ornate"></div><div class="inner">
+<div class="moon">☾</div><div class="eyebrow">the reading ends here</div><h1>LOVE<br>READING</h1><div class="big-script">Putri &amp; Subur</div><div class="moon-row">☾ · ♡ · ☽</div>
+<p>Semoga semua yang perlu kamu pahami menjadi lebih jelas, dan semua pilihan yang datang terasa lebih sadar.</p><div class="heart">♥</div><p style="font-style:italic">You deserve love that feels mutual, clear, and safe.</p>
+</div></div></div>
+<div class="nav"><button id="prevBtn">‹</button><button id="homeBtn">⌂</button><div class="counter"><span id="current">1</span> / 15</div><div class="dots" id="dots"></div><button id="nextBtn">›</button></div>
+</div></section></div>
+<script>
+const PASSWORD="stillchoosing";
+const pages=[...Array.from({length:15},(_,i)=>`assets/page-${String(i+1).padStart(2,"0")}.webp`)];
+let currentPage=1;
+const lockScreen=document.getElementById("lockScreen"),reader=document.getElementById("reader"),pageImg=document.getElementById("pageImg"),page15=document.getElementById("page15"),current=document.getElementById("current"),dots=document.getElementById("dots"),error=document.getElementById("error"),password=document.getElementById("password");
+for(let i=1;i<=15;i++){const d=document.createElement("span");d.className="dot";dots.appendChild(d)}
+function showReader(){lockScreen.classList.remove("active");reader.classList.add("active");renderPage(1,false)}
+function renderPage(n,animate=true){currentPage=Math.max(1,Math.min(15,n));current.textContent=currentPage;if(animate){pageImg.classList.add("swap");setTimeout(()=>{applyPage();pageImg.classList.remove("swap")},260)}else applyPage();document.querySelectorAll(".dot").forEach((d,i)=>d.classList.toggle("active",i===currentPage-1))}
+function applyPage(){page15.classList.remove("show");pageImg.style.display="block";pageImg.src=pages[currentPage-1];pageImg.alt=`Love Reading Putri & Subur — halaman ${currentPage}`}
+function unlock(){if(password.value.trim().toLowerCase()===PASSWORD){error.classList.remove("show");showReader()}else{error.classList.add("show");password.animate([{transform:"translateX(0)"},{transform:"translateX(-5px)"},{transform:"translateX(5px)"},{transform:"translateX(0)"}],{duration:220})}}
+document.getElementById("unlockBtn").onclick=unlock;password.onkeydown=e=>{if(e.key==="Enter")unlock()};
+document.getElementById("nextBtn").onclick=()=>renderPage(currentPage+1);document.getElementById("prevBtn").onclick=()=>renderPage(currentPage-1);
+document.getElementById("homeBtn").onclick=()=>{reader.classList.remove("active");lockScreen.classList.add("active");password.value="";error.classList.remove("show")};
+document.onkeydown=e=>{if(!reader.classList.contains("active"))return;if(e.key==="ArrowRight"||e.key===" "){e.preventDefault();renderPage(currentPage+1)}if(e.key==="ArrowLeft"){e.preventDefault();renderPage(currentPage-1)}};
+let touchX=0;reader.ontouchstart=e=>touchX=e.changedTouches[0].screenX;reader.ontouchend=e=>{const dx=e.changedTouches[0].screenX-touchX;if(Math.abs(dx)>45)renderPage(currentPage+(dx<0?1:-1))};
+for(let i=0;i<32;i++){const s=document.createElement("i");s.className="spark";s.style.left=Math.random()*100+"%";s.style.top=Math.random()*100+"%";s.style.animationDelay=Math.random()*4+"s";s.style.animationDuration=2.5+Math.random()*3+"s";document.getElementById("particles").appendChild(s)}
+</script></body></html>
