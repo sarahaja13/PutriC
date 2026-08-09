@@ -50,7 +50,11 @@ button,input{font:inherit}button{cursor:pointer}#app{height:100%;position:relati
 .counter{font-size:12px;letter-spacing:.14em;color:#77596a;white-space:nowrap}.dots{display:flex;gap:5px;align-items:center}.dot{width:5px;height:5px;border-radius:50%;background:#c8a9b7;transition:.25s}.dot.active{width:17px;border-radius:999px;background:#85516e}
 .cover-overlay{position:absolute;left:22px;right:22px;top:22px;display:flex;justify-content:space-between;align-items:center;z-index:3;pointer-events:none}.badge,.hint{padding:6px 11px;border:1px solid #8952684d;border-radius:999px;background:#fff9f6b3;font-size:10px;letter-spacing:.18em;color:#78566a}.hint{letter-spacing:0;font-size:11px}
 @media(max-width:600px){.page-stage{height:calc(100% - 70px);padding:8px 5px 0}.page-img{max-width:calc(100vw - 10px)}.lock-title{font-size:46px}.page-15 h1{font-size:52px}.page-15 .big-script{font-size:40px}.page-15 p{font-size:19px}.dots{display:none}}
-</style></head>
+.download-pdf{position:fixed;right:16px;top:14px;z-index:9;border:1px solid #8952684d;
+background:#fff8f4c2;color:#6e4660;text-decoration:none;border-radius:999px;padding:9px 14px;
+font-size:11px;letter-spacing:.08em;backdrop-filter:blur(14px);box-shadow:0 10px 25px #301e2e1f;
+transition:.25s}.download-pdf:hover{transform:translateY(-2px);background:#fffaf8}
+@media(max-width:600px){.download-pdf{top:10px;right:10px;padding:8px 11px;font-size:10px}}</style></head>
 <body><div id="app"><div id="particles"></div>
 <div id="pageLoader" class="page-loader" aria-hidden="true">
   <div class="loader-card">
@@ -67,7 +71,7 @@ button,input{font:inherit}button{cursor:pointer}#app{height:100%;position:relati
 <div class="pass-wrap"><input id="password" type="password" autocomplete="off" placeholder="Masukkan password"></div>
 <button class="unlock" id="unlockBtn">Buka Reading ♡</button><div class="error" id="error">Password belum tepat.</div>
 </div></section>
-<section id="reader" class="screen"><div class="viewer"><div class="cover-overlay"><div class="badge">LOVE • INSIGHT • GUIDANCE</div><div class="hint">Putri &amp; Subur</div></div>
+<section id="reader" class="screen"><div class="viewer"><a class="download-pdf" href="assets/Love_Reading_Putri_Subur.pdf" download>↓ Unduh PDF</a><div class="cover-overlay"><div class="badge">LOVE • INSIGHT • GUIDANCE</div><div class="hint">Putri &amp; Subur</div></div>
 <div class="page-stage"><img id="pageImg" class="page-img" alt="Love Reading"><div id="page15" class="page-15"><div class="ornate"></div><div class="inner">
 <div class="moon">☾</div><div class="eyebrow">the reading ends here</div><h1>LOVE<br>READING</h1><div class="big-script">Putri &amp; Subur</div><div class="moon-row">☾ · ♡ · ☽</div>
 <p>Semoga semua yang perlu kamu pahami menjadi lebih jelas, dan semua pilihan yang datang terasa lebih sadar.</p><div class="heart">♥</div><p style="font-style:italic">You deserve love that feels mutual, clear, and safe.</p>
