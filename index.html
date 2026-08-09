@@ -13,6 +13,22 @@ button,input{font:inherit}button{cursor:pointer}#app{height:100%;position:relati
 .spark{position:absolute;width:3px;height:3px;border-radius:50%;background:#fff;box-shadow:0 0 10px #b98a6288;animation:twinkle 3.5s ease-in-out infinite}
 @keyframes twinkle{0%,100%{opacity:.1;transform:scale(.7)}50%{opacity:.9;transform:scale(1.5)}}
 .screen{position:absolute;inset:0;display:none;z-index:2}.screen.active{display:flex}
+.page-loader{position:fixed;inset:0;z-index:20;display:flex;align-items:center;justify-content:center;
+  background:radial-gradient(circle at 50% 35%,#fff9f4e8,transparent 30%),rgba(48,33,50,.28);
+  backdrop-filter:blur(9px);opacity:0;visibility:hidden;pointer-events:none;transition:opacity .25s ease,visibility .25s ease}
+.page-loader.show{opacity:1;visibility:visible;pointer-events:auto}
+.loader-card{width:min(340px,calc(100% - 42px));padding:34px 28px 30px;text-align:center;
+  border:1px solid #89526859;background:#fffaf7e8;box-shadow:0 25px 70px #301e2e35;
+  position:relative;animation:loaderFloat .7s ease both}
+.loader-moon{font-size:35px;color:#80536d;margin-bottom:8px;animation:moonPulse 1.3s ease-in-out infinite}
+.loader-eyebrow{font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:#8a6879}
+.loader-title{font-family:"Cormorant Garamond",serif;font-size:28px;color:#4c2947;margin:8px 0 16px}
+.loader-line{height:2px;width:150px;margin:0 auto 14px;background:#dcc5ce;overflow:hidden;position:relative}
+.loader-line span{position:absolute;left:-45%;top:0;width:45%;height:100%;background:linear-gradient(90deg,transparent,#9b607d,#d2a06e,transparent);animation:loaderLine .8s ease-in-out infinite}
+.loader-copy{font-family:"Cormorant Garamond",serif;font-size:16px;color:#735967}
+@keyframes loaderLine{from{left:-45%}to{left:100%}}
+@keyframes loaderFloat{from{opacity:0;transform:translateY(8px) scale(.98)}to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes moonPulse{0%,100%{transform:scale(1);opacity:.72}50%{transform:scale(1.12);opacity:1}}
 .ornate{position:absolute;inset:14px;border:1px solid #89526859;pointer-events:none}.ornate:before,.ornate:after{content:"✦";position:absolute;color:var(--gold);font-size:15px;background:var(--cream);padding:0 8px;left:48%}.ornate:before{top:-10px}.ornate:after{bottom:-10px}
 #lockScreen{align-items:center;justify-content:center;padding:30px;background:radial-gradient(circle at 50% 18%,#ffffffd9,transparent 25%),linear-gradient(145deg,#fbf2ecf0,#e8d5d7f5)}
 .lock-card{width:min(440px,100%);text-align:center;position:relative;padding:54px 30px 42px;border:1px solid #89526859;background:#fffaf799;box-shadow:0 25px 70px #4b28421f;backdrop-filter:blur(12px)}
@@ -36,6 +52,15 @@ button,input{font:inherit}button{cursor:pointer}#app{height:100%;position:relati
 @media(max-width:600px){.page-stage{height:calc(100% - 70px);padding:8px 5px 0}.page-img{max-width:calc(100vw - 10px)}.lock-title{font-size:46px}.page-15 h1{font-size:52px}.page-15 .big-script{font-size:40px}.page-15 p{font-size:19px}.dots{display:none}}
 </style></head>
 <body><div id="app"><div id="particles"></div>
+<div id="pageLoader" class="page-loader" aria-hidden="true">
+  <div class="loader-card">
+    <div class="loader-moon">☾</div>
+    <div class="loader-eyebrow">turning the page</div>
+    <div class="loader-title">Sebentar ya...</div>
+    <div class="loader-line"><span></span></div>
+    <div class="loader-copy">Membuka halaman berikutnya</div>
+  </div>
+</div>
 <section id="lockScreen" class="screen active"><div class="ornate"></div><div class="lock-card">
 <div class="moon">☾</div><div class="eyebrow">a private love reading</div><div class="lock-title">LOVE<br>READING</div>
 <div class="script">Putri &amp; Subur</div><div class="lock-copy">Some stories are not meant to be rushed.<br>This one is meant to be felt.</div>
@@ -52,17 +77,56 @@ button,input{font:inherit}button{cursor:pointer}#app{height:100%;position:relati
 <script>
 const PASSWORD="stillchoosing";
 const pages=[...Array.from({length:15},(_,i)=>`assets/page-${String(i+1).padStart(2,"0")}.webp`)];
-let currentPage=1;
-const lockScreen=document.getElementById("lockScreen"),reader=document.getElementById("reader"),pageImg=document.getElementById("pageImg"),page15=document.getElementById("page15"),current=document.getElementById("current"),dots=document.getElementById("dots"),error=document.getElementById("error"),password=document.getElementById("password");
+let currentPage=1; let pageChanging=false;
+const lockScreen=document.getElementById("lockScreen"),reader=document.getElementById("reader"),pageImg=document.getElementById("pageImg"),page15=document.getElementById("page15"),current=document.getElementById("current"),dots=document.getElementById("dots"),error=document.getElementById("error"),password=document.getElementById("password"),pageLoader=document.getElementById("pageLoader");
 for(let i=1;i<=15;i++){const d=document.createElement("span");d.className="dot";dots.appendChild(d)}
 function showReader(){lockScreen.classList.remove("active");reader.classList.add("active");renderPage(1,false)}
-function renderPage(n,animate=true){currentPage=Math.max(1,Math.min(15,n));current.textContent=currentPage;if(animate){pageImg.classList.add("swap");setTimeout(()=>{applyPage();pageImg.classList.remove("swap")},260)}else applyPage();document.querySelectorAll(".dot").forEach((d,i)=>d.classList.toggle("active",i===currentPage-1))}
+async function renderPage(n,animate=true){
+  const target=Math.max(1,Math.min(15,n));
+  if(target===currentPage && animate)return;
+  if(pageChanging && animate)return;
+
+  currentPage=target;
+  current.textContent=currentPage;
+  document.querySelectorAll(".dot").forEach((d,i)=>d.classList.toggle("active",i===currentPage-1));
+
+  if(!animate){applyPage();return}
+
+  pageChanging=true;
+  pageLoader.classList.add("show");
+
+  const nextSrc=pages[currentPage-1];
+  const preloaded=new Image();
+  const started=performance.now();
+
+  const waitForImage=new Promise(resolve=>{
+    preloaded.onload=()=>resolve();
+    preloaded.onerror=()=>resolve();
+    preloaded.src=nextSrc;
+  });
+
+  await waitForImage;
+
+  // Keeps the loading moment intentional without feeling slow.
+  const elapsed=performance.now()-started;
+  await new Promise(resolve=>setTimeout(resolve,Math.max(480-elapsed,0)));
+
+  pageImg.classList.add("swap");
+  await new Promise(resolve=>setTimeout(resolve,220));
+  applyPage();
+  pageImg.classList.remove("swap");
+
+  await new Promise(resolve=>setTimeout(resolve,180));
+  pageLoader.classList.remove("show");
+  pageChanging=false;
+}
 function applyPage(){page15.classList.remove("show");pageImg.style.display="block";pageImg.src=pages[currentPage-1];pageImg.alt=`Love Reading Putri & Subur — halaman ${currentPage}`}
 function unlock(){if(password.value.trim().toLowerCase()===PASSWORD){error.classList.remove("show");showReader()}else{error.classList.add("show");password.animate([{transform:"translateX(0)"},{transform:"translateX(-5px)"},{transform:"translateX(5px)"},{transform:"translateX(0)"}],{duration:220})}}
 document.getElementById("unlockBtn").onclick=unlock;password.onkeydown=e=>{if(e.key==="Enter")unlock()};
-document.getElementById("nextBtn").onclick=()=>renderPage(currentPage+1);document.getElementById("prevBtn").onclick=()=>renderPage(currentPage-1);
+document.getElementById("nextBtn").onclick=()=>{if(!pageChanging)renderPage(currentPage+1)};
+document.getElementById("prevBtn").onclick=()=>{if(!pageChanging)renderPage(currentPage-1)};
 document.getElementById("homeBtn").onclick=()=>{reader.classList.remove("active");lockScreen.classList.add("active");password.value="";error.classList.remove("show")};
-document.onkeydown=e=>{if(!reader.classList.contains("active"))return;if(e.key==="ArrowRight"||e.key===" "){e.preventDefault();renderPage(currentPage+1)}if(e.key==="ArrowLeft"){e.preventDefault();renderPage(currentPage-1)}};
-let touchX=0;reader.ontouchstart=e=>touchX=e.changedTouches[0].screenX;reader.ontouchend=e=>{const dx=e.changedTouches[0].screenX-touchX;if(Math.abs(dx)>45)renderPage(currentPage+(dx<0?1:-1))};
+document.onkeydown=e=>{if(!reader.classList.contains("active"))return;if(pageChanging)return;if(e.key==="ArrowRight"||e.key===" "){e.preventDefault();renderPage(currentPage+1)}if(e.key==="ArrowLeft"){e.preventDefault();renderPage(currentPage-1)}};
+let touchX=0;reader.ontouchstart=e=>touchX=e.changedTouches[0].screenX;reader.ontouchend=e=>{const dx=e.changedTouches[0].screenX-touchX;if(Math.abs(dx)>45&&!pageChanging)renderPage(currentPage+(dx<0?1:-1))};
 for(let i=0;i<32;i++){const s=document.createElement("i");s.className="spark";s.style.left=Math.random()*100+"%";s.style.top=Math.random()*100+"%";s.style.animationDelay=Math.random()*4+"s";s.style.animationDuration=2.5+Math.random()*3+"s";document.getElementById("particles").appendChild(s)}
 </script></body></html>
